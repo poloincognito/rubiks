@@ -134,7 +134,7 @@ pair<array<array<array<int, 3>, 3>, 6>, vector<float>> simulatedAnnealing(
         // break if solved
         if (energy == 0)
         {
-            cout << "Solved in " << length << " moves !" << endl;
+            cout << "Solved in " << length << " steps." << endl;
             break;
         }
     }

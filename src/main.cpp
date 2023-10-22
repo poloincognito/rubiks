@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "rubikscube.h"
 
 // edge sampler
@@ -19,57 +21,20 @@ array<array<array<int, 3>, 3>, 6> sampleCorner(array<array<array<int, 3>, 3>, 6>
 
 int main()
 {
+    // initialize
     string filename = "reference.txt";
     array<array<array<int, 3>, 3>, 6> cube = parseRubiksCube(filename);
-
-    // print
-    printRubiksCube(cube);
-    cout << endl
-         << "Cube successfully parsed !" << endl
-         << endl;
+    cout << "Cube successfully parsed." << endl;
 
     // mixing
     RubiksCube rubikscube;
     rubikscube.state = cube;
-    cout << "Mixing the cube..." << endl;
-    rubikscube.mix(20);
+    cout << "Mixing the cube..." << endl
+         << endl;
+    rubikscube.mix(30);
     rubikscube.print();
 
-    // // energy
-    // float e = edgeEnergy(rubikscube.state);
-    // cout << endl
-    //      << "Edge energy: " << e << endl
-    //      << endl;
-
-    // // print face
-    // array<array<int, 3>, 3> face = cube[0];
-    // face[0][0] = 1;
-    // printFace(face);
-
-    // // rotate
-    // rotateFace(face);
-    // printFace(face);
-    // cout << "Face successfully rotated !" << endl;
-
-    // // move
-    // vector<string> move;
-    // move.push_back("F'");
-    // moveFunc(cube, move);
-    // printRubiksCube(cube);
-
-    // formulae
-    vector<string> formula = sampleFormula(edgeFormulae);
-    printFormula(formula);
-    cout << endl
-         << "Formula successfully sampled !" << endl
-         << endl;
-
-    // neighbour
-    array<array<array<int, 3>, 3>, 6> neighbour = sampleNeighbour(rubikscube.state, edgeFormulae);
-    printRubiksCube(neighbour);
-    cout << "Neighbour successfully sampled !" << endl
-         << endl;
-    rubikscube.print();
+    auto start = chrono::high_resolution_clock::now();
 
     // simulated annealing for edges
     int maxLength = 5000;
@@ -79,24 +44,32 @@ int main()
         edgeEnergy,
         edgeBetaFunc,
         maxLength);
-    cout << "Simulated annealing for edges done." << endl;
+    cout << "Simulated annealing for edges done." << endl
+         << endl;
     printRubiksCube(resultEdge.first);
 
-    // export energy list for edges
-    string exportEdgeFilename = "edge_energy.txt";
-    exportEnergyList(resultEdge.second, exportEdgeFilename);
+    // // export energy list for edges
+    // string exportEdgeFilename = "edge_energy.txt";
+    // exportEnergyList(resultEdge.second, exportEdgeFilename);
 
     // simulated annealing for corners
     pair<array<array<array<int, 3>, 3>, 6>, vector<float>> resultCorner = simulatedAnnealing(
         resultEdge.first,
-        sampleEdge,
+        sampleCorner,
         cornerEnergy,
         edgeBetaFunc,
         maxLength);
-    cout << "Simulated annealing for corners done." << endl;
+    cout << "Simulated annealing for corners done." << endl
+         << endl;
     printRubiksCube(resultCorner.first);
+
+    auto stop = chrono::high_resolution_clock::now();
 
     // export energy list for corners
     string exportCornerFilename = "corner_energy.txt";
     exportEnergyList(resultCorner.second, exportCornerFilename);
+
+    // print the execution time
+    auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+    cout << "Time taken by function: " << duration.count() << " microseconds" << std::endl;
 }

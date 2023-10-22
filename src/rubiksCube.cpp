@@ -42,12 +42,46 @@ void printFace(const array<array<int, 3>, 3> &face)
     cout << endl;
 }
 
-void printRubiksCube(const array<array<array<int, 3>, 3>, 6> &cube)
-{ // This function prints a Rubik's cube configuration.
-    for (int face = 0; face < 6; ++face)
+void printRow(const array<int, 3> &row)
+{ // This function prints a row of a Rubik's cube face.
+    for (int col = 0; col < 3; ++col)
     {
-        printFace(cube[face]);
+        cout << row[col] << " ";
     }
+}
+
+void printRubiksCube(const array<array<array<int, 3>, 3>, 6> &cube)
+{
+    // This function prints a Rubik's cube configuration.
+    // up
+    for (int row = 0; row < 3; row++)
+    {
+        cout << "       ";
+        printRow(cube[0][row]);
+        cout << endl;
+    }
+    cout << endl;
+    // left, front, right, back
+    for (int row = 0; row < 3; row++)
+    {
+        printRow(cube[1][row]);
+        cout << " ";
+        printRow(cube[2][row]);
+        cout << " ";
+        printRow(cube[3][row]);
+        cout << " ";
+        printRow(cube[4][row]);
+        cout << endl;
+    }
+    cout << endl;
+    // back
+    for (int row = 0; row < 3; row++)
+    {
+        cout << "       ";
+        printRow(cube[5][row]);
+        cout << endl;
+    }
+    cout << endl;
 }
 
 void rotateFace(array<array<int, 3>, 3> &arr)
@@ -82,17 +116,21 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, const vector<string> &mo
         if (move == "F'")
         { // front counter-clockwise
             rotateFace(state[2]);
-            auto buffer = state[1][2];
-            state[1][2] = {state[0][2][2], state[0][1][2], state[0][0][2]};
-            state[0][2][2] = state[3][0][0];
-            state[0][1][2] = state[3][1][0];
-            state[0][0][2] = state[3][2][0];
-            state[3][0][0] = state[5][2][2];
-            state[3][1][0] = state[5][2][1];
-            state[3][2][0] = state[5][2][0];
-            state[5][2][2] = buffer[0];
-            state[5][2][1] = buffer[1];
-            state[5][2][0] = buffer[2];
+            array<int, 3> buffer = state[0][2];
+            // right to up
+            state[0][2] = {state[3][0][0], state[3][1][0], state[3][2][0]};
+            // down to right
+            state[3][0][0] = state[5][0][2];
+            state[3][1][0] = state[5][0][1];
+            state[3][2][0] = state[5][0][0];
+            // left to down
+            state[5][0][0] = state[1][0][2];
+            state[5][0][1] = state[1][1][2];
+            state[5][0][2] = state[1][2][2];
+            // buffer to left
+            state[1][0][2] = buffer[2];
+            state[1][1][2] = buffer[1];
+            state[1][2][2] = buffer[0];
         }
         else if (move == "F")
         {
@@ -106,17 +144,21 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, const vector<string> &mo
         else if (move == "B'")
         { // back counter-clockwise
             rotateFace(state[4]);
-            auto buffer = state[0][0];
-            state[0][0] = {state[1][0][2], state[1][0][1], state[1][0][0]};
-            state[1][0][2] = state[5][2][0];
-            state[1][0][1] = state[5][2][1];
-            state[1][0][0] = state[5][2][2];
+            array<int, 3> buffer = state[0][0];
+            // left to up
+            state[0][0] = {state[1][2][0], state[1][1][0], state[1][0][0]};
+            // down to left
+            state[1][0][0] = state[5][2][0];
+            state[1][1][0] = state[5][2][1];
+            state[1][2][0] = state[5][2][2];
+            // right to down
             state[5][2][0] = state[3][2][2];
-            state[5][2][1] = state[3][2][1];
-            state[5][2][2] = state[3][2][0];
-            state[3][2][2] = buffer[0];
-            state[3][2][1] = buffer[1];
-            state[3][2][0] = buffer[2];
+            state[5][2][1] = state[3][1][2];
+            state[5][2][2] = state[3][0][2];
+            // buffer to right
+            state[3][0][2] = buffer[0];
+            state[3][1][2] = buffer[1];
+            state[3][2][2] = buffer[2];
         }
         else if (move == "B")
         {
@@ -130,14 +172,20 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, const vector<string> &mo
         else if (move == "L'")
         { // left counter-clockwise
             rotateFace(state[1]);
-            auto buffer = state[4][2];
-            state[4][2] = {state[0][0][0], state[0][1][0], state[0][2][0]};
+            array<int, 3> buffer = {state[4][2][2], state[4][1][2], state[4][0][2]};
+            // up to back
+            state[4][0][2] = state[0][2][0];
+            state[4][1][2] = state[0][1][0];
+            state[4][2][2] = state[0][0][0];
+            // front to up
             state[0][0][0] = state[2][0][0];
             state[0][1][0] = state[2][1][0];
             state[0][2][0] = state[2][2][0];
+            // down to front
             state[2][0][0] = state[5][0][0];
             state[2][1][0] = state[5][1][0];
             state[2][2][0] = state[5][2][0];
+            // buffer to down
             state[5][0][0] = buffer[0];
             state[5][1][0] = buffer[1];
             state[5][2][0] = buffer[2];
@@ -154,14 +202,20 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, const vector<string> &mo
         else if (move == "R'")
         { // right counter-clockwise
             rotateFace(state[3]);
-            auto buffer = state[0][2];
-            state[0][2] = {state[4][0][0], state[4][1][0], state[4][2][0]};
-            state[4][0][0] = state[5][0][2];
+            array<int, 3> buffer = {state[0][0][2], state[0][1][2], state[0][2][2]};
+            // back to up
+            state[0][0][2] = state[4][2][0];
+            state[0][1][2] = state[4][1][0];
+            state[0][2][2] = state[4][0][0];
+            // down to back
+            state[4][0][0] = state[5][2][2];
             state[4][1][0] = state[5][1][2];
-            state[4][2][0] = state[5][2][2];
+            state[4][2][0] = state[5][0][2];
+            // front to down
             state[5][0][2] = state[2][0][2];
             state[5][1][2] = state[2][1][2];
             state[5][2][2] = state[2][2][2];
+            // buffer to front
             state[2][0][2] = buffer[0];
             state[2][1][2] = buffer[1];
             state[2][2][2] = buffer[2];
@@ -178,10 +232,14 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, const vector<string> &mo
         else if (move == "U'")
         { // up counter-clockwise
             rotateFace(state[0]);
-            auto buffer = state[2][0];
+            array<int, 3> buffer = state[2][0];
+            // left to front
             state[2][0] = state[1][0];
+            // back to left
             state[1][0] = state[4][0];
+            // right to back
             state[4][0] = state[3][0];
+            // front to right
             state[3][0] = buffer;
         }
         else if (move == "U")
@@ -196,10 +254,14 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, const vector<string> &mo
         else if (move == "D'")
         { // down counter-clockwise
             rotateFace(state[5]);
-            auto buffer = state[2][2];
+            array<int, 3> buffer = state[2][2];
+            // left to front
             state[2][2] = state[3][2];
+            // front to right
             state[3][2] = state[4][2];
+            // right to back
             state[4][2] = state[1][2];
+            // back to left
             state[1][2] = buffer;
         }
         else if (move == "D")
