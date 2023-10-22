@@ -33,14 +33,14 @@ public:
 vector<vector<string>> parseFormulae(const string &filename);
 vector<string> sampleFormula(const vector<vector<string>> &formulae);
 void printFormula(const vector<string>);
-float computeEdgeEnergy(const array<array<array<int, 3>, 3>, 6> &state);
 array<array<array<int, 3>, 3>, 6> sampleNeighbour(array<array<array<int, 3>, 3>, 6> state, const vector<vector<string>> &formulae);
 float edgeBetaFunc(int idx);
 
 // typedef for energy and sample functions
 typedef array<array<array<int, 3>, 3>, 6> (*sampleFunc)(array<array<array<int, 3>, 3>, 6>);
-typedef float (*energyFunc)(array<array<array<int, 3>, 3>, 6> &);
+typedef float (*energyFunc)(const array<array<array<int, 3>, 3>, 6> &);
 typedef float (*betaFunc)(int);
+extern energyFunc edgeEnergy;
 
 pair<array<array<array<int, 3>, 3>, 6>, vector<float>> simulatedAnnealing(
     array<array<array<int, 3>, 3>, 6> initialState,

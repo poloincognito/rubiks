@@ -3,10 +3,11 @@
 // edge sampler
 string edgeFormulaeFilename = "edge_formulae.txt";
 vector<vector<string>> edgeFormulae = parseFormulae(edgeFormulaeFilename);
-array<array<array<int, 3>, 3>, 6> sampleEdge(array<array<array<int, 3>, 3>, 6> state)
+array<array<array<int, 3>, 3>, 6> sampleEdgeFunc(array<array<array<int, 3>, 3>, 6> state)
 {
     return sampleNeighbour(state, edgeFormulae);
 };
+sampleFunc sampleEdge = &sampleEdgeFunc;
 
 // corner sampler
 string cornerFormulaeFilename = "corner_formulae.txt";
@@ -33,11 +34,11 @@ int main()
     rubikscube.mix(20);
     rubikscube.print();
 
-    // energy
-    float e = computeEdgeEnergy(rubikscube.state);
-    cout << endl
-         << "Edge energy: " << e << endl
-         << endl;
+    // // energy
+    // float e = edgeEnergy(rubikscube.state);
+    // cout << endl
+    //      << "Edge energy: " << e << endl
+    //      << endl;
 
     // // print face
     // array<array<int, 3>, 3> face = cube[0];
@@ -74,7 +75,7 @@ int main()
     // pair<array<array<array<int, 3>, 3>, 6>, vector<float>> result = simulatedAnnealing(
     //     rubikscube.state,
     //     sampleEdge,
-    //     computeEdgeEnergy,
+    //     edgeEnergy,
     //     edgeBetaFunc,
     //     maxLength);
     // cout << "Simulated annealing done !" << endl;

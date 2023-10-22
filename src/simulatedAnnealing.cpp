@@ -56,8 +56,11 @@ float computeEdgeEnergy(const array<array<array<int, 3>, 3>, 6> &state)
     }
     return energy / (4 * 6);
 }
+energyFunc edgeEnergy = &computeEdgeEnergy;
 
-array<array<array<int, 3>, 3>, 6> sampleNeighbour(array<array<array<int, 3>, 3>, 6> state, const vector<vector<string>> &formulae)
+array<array<array<int, 3>, 3>, 6> sampleNeighbour(
+    array<array<array<int, 3>, 3>, 6> state,
+    const vector<vector<string>> &formulae)
 {
     // This function samples a neighbour of a Rubik's cube state.
     vector<string> formula = sampleFormula(formulae);
