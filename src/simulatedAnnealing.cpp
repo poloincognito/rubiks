@@ -1,5 +1,7 @@
 #include "rubikscube.h"
 
+// Parsing formulae
+
 vector<vector<string>> parseFormulae(const string &filename)
 {
     // This function parse the edge swap and corner swap formulae exported by the notebook.
@@ -44,6 +46,8 @@ void printFormula(const vector<string> formula)
     }
 }
 
+// Energy functions
+
 float computeEdgeEnergy(const array<array<array<int, 3>, 3>, 6> &state)
 {
     float energy = 0.;
@@ -57,6 +61,20 @@ float computeEdgeEnergy(const array<array<array<int, 3>, 3>, 6> &state)
     return energy / (4 * 6);
 }
 energyFunc edgeEnergy = &computeEdgeEnergy;
+
+float computeCornerEnergy(const array<array<array<int, 3>, 3>, 6> &state)
+{
+    float energy = 0.;
+    for (int face = 0; face < 6; face++)
+    {
+        energy += state[face][0][0] != face;
+        energy += state[face][2][2] != face;
+        energy += state[face][0][2] != face;
+        energy += state[face][2][0] != face;
+    }
+    return energy / (4 * 6);
+}
+energyFunc cornerEnergy = &computeCornerEnergy;
 
 array<array<array<int, 3>, 3>, 6> sampleNeighbour(
     array<array<array<int, 3>, 3>, 6> state,
@@ -73,53 +91,63 @@ float edgeBetaFunc(int idx)
     return sqrt(idx);
 }
 
+// Simulated annealing algorithm
+
 pair<array<array<array<int, 3>, 3>, 6>, vector<float>> simulatedAnnealing(
     array<array<array<int, 3>, 3>, 6> initialState,
-    sampleFunc,
-    energyFunc,
-    betaFunc,
+    sampleFunc sample,
+    energyFunc computeEnergy,
+    betaFunc beta,
     int maxLength)
 {
     // This function implements the simulated annealing algorithm.
     vector<float> energyList;
-    // float energy = energyFunc(initialState);
-    // array<array<array<int, 3>, 3>, 6> neighbour;
-    // float neighbourEnergy;
-    // float beta = betaFunc(0);
-    // float proba;
-    // float random;
+    float energy = computeEnergy(initialState);
+    array<array<array<int, 3>, 3>, 6> neighbour;
+    float neighbourEnergy;
+    float current_beta = beta(0);
+    float proba;
+    float random;
 
-    // // debug
-    // cout << "SA starting, initial state energy is:" << energy << endl;
+    // debug
+    cout << "SA starting, initial state energy is: " << energy << endl;
 
-    // // SA algorithm
-    // for (int length = 0; length < maxLength; length++)
-    // {
-    //     neighbour = sampleFunc(initialState);
-    //     neighbourEnergy = energyFunc(neighbour);
-    //     beta = betaFunc(length);
+    // SA algorithm
+    for (int length = 0; length < maxLength; length++)
+    {
+        neighbour = sample(initialState);
+        neighbourEnergy = computeEnergy(neighbour);
+        current_beta = beta(length);
 
-    //     // accept or reject
-    //     proba = exp(beta * (energy - neighbourEnergy));
-    //     uniform_real_distribution<float> dist(0., 1.);
-    //     random = dist(rng);
-    //     if (random < proba)
-    //     {
-    //         initialState = neighbour;
-    //         energy = neighbourEnergy;
-    //     }
+        // accept or reject
+        proba = exp(current_beta * (energy - neighbourEnergy));
+        uniform_real_distribution<float> dist(0., 1.);
+        random = dist(rng);
+        if (random < proba)
+        {
+            initialState = neighbour;
+            energy = neighbourEnergy;
+        }
 
-    //     // debug
-    //     cout << "Energy: " << energy << endl;
+        energyList.push_back(energy);
 
-    //     energyList.push_back(energy);
-
-    //     // break if solved
-    //     if (energy == 0)
-    //     {
-    //         break;
-    //     }
-    // }
+        // break if solved
+        if (energy == 0)
+        {
+            cout << "Solved in " << length << " moves !" << endl;
+            break;
+        }
+    }
 
     return make_pair(initialState, energyList);
+}
+
+void exportEnergyList(const vector<float> &energyList, const string &filename)
+{
+    // This function exports the energy list to a file.
+    ofstream outputFile(filename);
+    for (float energy : energyList)
+    {
+        outputFile << energy << endl;
+    }
 }

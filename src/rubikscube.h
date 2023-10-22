@@ -41,6 +41,7 @@ typedef array<array<array<int, 3>, 3>, 6> (*sampleFunc)(array<array<array<int, 3
 typedef float (*energyFunc)(const array<array<array<int, 3>, 3>, 6> &);
 typedef float (*betaFunc)(int);
 extern energyFunc edgeEnergy;
+extern energyFunc cornerEnergy;
 
 pair<array<array<array<int, 3>, 3>, 6>, vector<float>> simulatedAnnealing(
     array<array<array<int, 3>, 3>, 6> initialState,
@@ -48,5 +49,7 @@ pair<array<array<array<int, 3>, 3>, 6>, vector<float>> simulatedAnnealing(
     energyFunc,
     betaFunc,
     int maxLength);
+
+void exportEnergyList(const vector<float> &energyList, const string &filename);
 
 #endif

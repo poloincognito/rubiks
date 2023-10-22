@@ -31,6 +31,7 @@ int main()
     // mixing
     RubiksCube rubikscube;
     rubikscube.state = cube;
+    cout << "Mixing the cube..." << endl;
     rubikscube.mix(20);
     rubikscube.print();
 
@@ -70,14 +71,32 @@ int main()
          << endl;
     rubikscube.print();
 
-    // // simulated annealing
-    // int maxLength = 3000;
-    // pair<array<array<array<int, 3>, 3>, 6>, vector<float>> result = simulatedAnnealing(
-    //     rubikscube.state,
-    //     sampleEdge,
-    //     edgeEnergy,
-    //     edgeBetaFunc,
-    //     maxLength);
-    // cout << "Simulated annealing done !" << endl;
-    // printRubiksCube(result.first);
+    // simulated annealing for edges
+    int maxLength = 5000;
+    pair<array<array<array<int, 3>, 3>, 6>, vector<float>> resultEdge = simulatedAnnealing(
+        rubikscube.state,
+        sampleEdge,
+        edgeEnergy,
+        edgeBetaFunc,
+        maxLength);
+    cout << "Simulated annealing for edges done." << endl;
+    printRubiksCube(resultEdge.first);
+
+    // export energy list for edges
+    string exportEdgeFilename = "edge_energy.txt";
+    exportEnergyList(resultEdge.second, exportEdgeFilename);
+
+    // simulated annealing for corners
+    pair<array<array<array<int, 3>, 3>, 6>, vector<float>> resultCorner = simulatedAnnealing(
+        resultEdge.first,
+        sampleEdge,
+        cornerEnergy,
+        edgeBetaFunc,
+        maxLength);
+    cout << "Simulated annealing for corners done." << endl;
+    printRubiksCube(resultCorner.first);
+
+    // export energy list for corners
+    string exportCornerFilename = "corner_energy.txt";
+    exportEnergyList(resultCorner.second, exportCornerFilename);
 }
