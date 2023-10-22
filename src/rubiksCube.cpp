@@ -1,13 +1,4 @@
-// #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-// #include <array>
-// #include <vector>
-
 #include "rubikscube.h"
-
-// using namespace std;
 
 array<array<array<int, 3>, 3>, 6> parseRubiksCube(string &filename)
 { // This function parse a Rubik's cube configuration from a txt file.
@@ -235,4 +226,21 @@ void RubiksCube::move(vector<string> &moves)
 void RubiksCube::print()
 {
     printRubiksCube(state);
+}
+
+void RubiksCube::mix(int n)
+{
+    vector<vector<string>> elementary_moves;
+    elementary_moves.push_back({"U"});
+    elementary_moves.push_back({"D"});
+    elementary_moves.push_back({"L"});
+    elementary_moves.push_back({"R"});
+    elementary_moves.push_back({"F"});
+    elementary_moves.push_back({"B"});
+
+    for (int i = 0; i < n; i++)
+    {
+        vector<string> random_move = sampleFormula(elementary_moves);
+        move(random_move);
+    }
 }
