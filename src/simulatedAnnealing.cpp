@@ -1,6 +1,6 @@
 #include "rubikscube.h"
 
-vector<vector<string>> parseFormulae(string &filename)
+vector<vector<string>> parseFormulae(const string &filename)
 {
     // This function parse the edge swap and corner swap formulae exported by the notebook.
 
@@ -27,7 +27,7 @@ vector<vector<string>> parseFormulae(string &filename)
 
 mt19937 rng(std::time(0));
 
-vector<string> sampleFormula(vector<vector<string>> &formulae)
+vector<string> sampleFormula(const vector<vector<string>> &formulae)
 {
     // This function samples a random formula from a list of formulae.
     uniform_int_distribution<size_t> dist(0, formulae.size() - 1);
@@ -35,7 +35,7 @@ vector<string> sampleFormula(vector<vector<string>> &formulae)
     return formulae[randomIndex];
 }
 
-void printFormula(vector<string> formula)
+void printFormula(const vector<string> formula)
 {
     // This function concatenates and prints a formula.
     for (string str : formula)
@@ -44,7 +44,7 @@ void printFormula(vector<string> formula)
     }
 }
 
-float computeEdgeEnergy(array<array<array<int, 3>, 3>, 6> &state)
+float computeEdgeEnergy(const array<array<array<int, 3>, 3>, 6> &state)
 {
     float energy = 0.;
     for (int face = 0; face < 6; face++)
@@ -57,7 +57,7 @@ float computeEdgeEnergy(array<array<array<int, 3>, 3>, 6> &state)
     return energy / (4 * 6);
 }
 
-array<array<array<int, 3>, 3>, 6> sampleNeighbour(array<array<array<int, 3>, 3>, 6> state, vector<vector<string>> &formulae)
+array<array<array<int, 3>, 3>, 6> sampleNeighbour(array<array<array<int, 3>, 3>, 6> state, const vector<vector<string>> &formulae)
 {
     // This function samples a neighbour of a Rubik's cube state.
     vector<string> formula = sampleFormula(formulae);
@@ -72,9 +72,9 @@ float edgeBetaFunc(int idx)
 
 pair<array<array<array<int, 3>, 3>, 6>, vector<float>> simulatedAnnealing(
     array<array<array<int, 3>, 3>, 6> initialState,
-    array<array<array<int, 3>, 3>, 6> (*sampleFunc)(array<array<array<int, 3>, 3>, 6> &),
-    float (*energyFunc)(array<array<array<int, 3>, 3>, 6>),
-    float (*betaFunc)(int),
+    sampleFunc,
+    energyFunc,
+    betaFunc,
     int maxLength)
 {
     // This function implements the simulated annealing algorithm.

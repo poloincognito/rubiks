@@ -14,34 +14,39 @@
 using namespace std;
 
 // Rubik's cube
-array<array<array<int, 3>, 3>, 6> parseRubiksCube(string &filename);
-void printFace(array<array<int, 3>, 3> &face);
-void printRubiksCube(array<array<array<int, 3>, 3>, 6> &cube);
+array<array<array<int, 3>, 3>, 6> parseRubiksCube(const string &filename);
+void printFace(const array<array<int, 3>, 3> &face);
+void printRubiksCube(const array<array<array<int, 3>, 3>, 6> &cube);
 void rotateFace(array<array<int, 3>, 3> &arr);
-void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves);
+void moveFunc(array<array<array<int, 3>, 3>, 6> &state, const vector<string> &moves);
 
 class RubiksCube
 {
 public:
     array<array<array<int, 3>, 3>, 6> state;
-    void move(vector<string> &moves);
+    void move(const vector<string> &moves);
     void print();
     void mix(int n);
 };
 
 // Simulated annealing
-vector<vector<string>> parseFormulae(string &filename);
-vector<string> sampleFormula(vector<vector<string>> &formulae);
-void printFormula(vector<string>);
-float computeEdgeEnergy(array<array<array<int, 3>, 3>, 6> &state);
-array<array<array<int, 3>, 3>, 6> sampleNeighbour(array<array<array<int, 3>, 3>, 6> state, vector<vector<string>> &formulae);
+vector<vector<string>> parseFormulae(const string &filename);
+vector<string> sampleFormula(const vector<vector<string>> &formulae);
+void printFormula(const vector<string>);
+float computeEdgeEnergy(const array<array<array<int, 3>, 3>, 6> &state);
+array<array<array<int, 3>, 3>, 6> sampleNeighbour(array<array<array<int, 3>, 3>, 6> state, const vector<vector<string>> &formulae);
 float edgeBetaFunc(int idx);
+
+// typedef for energy and sample functions
+typedef array<array<array<int, 3>, 3>, 6> (*sampleFunc)(array<array<array<int, 3>, 3>, 6>);
+typedef float (*energyFunc)(array<array<array<int, 3>, 3>, 6> &);
+typedef float (*betaFunc)(int);
 
 pair<array<array<array<int, 3>, 3>, 6>, vector<float>> simulatedAnnealing(
     array<array<array<int, 3>, 3>, 6> initialState,
-    array<array<array<int, 3>, 3>, 6> (*sampleFunc)(array<array<array<int, 3>, 3>, 6>),
-    float (*energyFunc)(array<array<array<int, 3>, 3>, 6> &),
-    float (*betaFunc)(int),
+    sampleFunc,
+    energyFunc,
+    betaFunc,
     int maxLength);
 
 #endif

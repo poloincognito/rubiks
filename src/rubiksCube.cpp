@@ -1,6 +1,6 @@
 #include "rubikscube.h"
 
-array<array<array<int, 3>, 3>, 6> parseRubiksCube(string &filename)
+array<array<array<int, 3>, 3>, 6> parseRubiksCube(const string &filename)
 { // This function parse a Rubik's cube configuration from a txt file.
 
     // declare
@@ -29,7 +29,7 @@ array<array<array<int, 3>, 3>, 6> parseRubiksCube(string &filename)
     return cube;
 }
 
-void printFace(array<array<int, 3>, 3> &face)
+void printFace(const array<array<int, 3>, 3> &face)
 { // This function prints a face of a Rubik's cube.
     for (int row = 0; row < 3; ++row)
     {
@@ -42,7 +42,7 @@ void printFace(array<array<int, 3>, 3> &face)
     cout << endl;
 }
 
-void printRubiksCube(array<array<array<int, 3>, 3>, 6> &cube)
+void printRubiksCube(const array<array<array<int, 3>, 3>, 6> &cube)
 { // This function prints a Rubik's cube configuration.
     for (int face = 0; face < 6; ++face)
     {
@@ -75,9 +75,9 @@ void rotateFace(array<array<int, 3>, 3> &arr)
     }
 }
 
-void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves)
+void moveFunc(array<array<array<int, 3>, 3>, 6> &state, const vector<string> &moves)
 { // This function moves the Rubik's cube according to the given moves.
-    for (string &move : moves)
+    for (const string &move : moves)
     {
         if (move == "F'")
         { // front counter-clockwise
@@ -96,12 +96,12 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves)
         }
         else if (move == "F")
         {
+            vector<string> equivalent_move;
             for (int i = 0; i < 3; i++)
             {
-                vector<string> move;
-                move.push_back("F'");
-                moveFunc(state, move);
+                equivalent_move.push_back("F'");
             }
+            moveFunc(state, equivalent_move);
         }
         else if (move == "B'")
         { // back counter-clockwise
@@ -120,12 +120,12 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves)
         }
         else if (move == "B")
         {
+            vector<string> equivalent_move;
             for (int i = 0; i < 3; i++)
             {
-                vector<string> move;
-                move.push_back("B'");
-                moveFunc(state, move);
+                equivalent_move.push_back("B'");
             }
+            moveFunc(state, equivalent_move);
         }
         else if (move == "L'")
         { // left counter-clockwise
@@ -144,12 +144,12 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves)
         }
         else if (move == "L")
         {
+            vector<string> equivalent_move;
             for (int i = 0; i < 3; i++)
             {
-                vector<string> move;
-                move.push_back("L'");
-                moveFunc(state, move);
+                equivalent_move.push_back("L'");
             }
+            moveFunc(state, equivalent_move);
         }
         else if (move == "R'")
         { // right counter-clockwise
@@ -168,12 +168,12 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves)
         }
         else if (move == "R")
         {
+            vector<string> equivalent_move;
             for (int i = 0; i < 3; i++)
             {
-                vector<string> move;
-                move.push_back("R'");
-                moveFunc(state, move);
+                equivalent_move.push_back("R'");
             }
+            moveFunc(state, equivalent_move);
         }
         else if (move == "U'")
         { // up counter-clockwise
@@ -186,12 +186,12 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves)
         }
         else if (move == "U")
         {
+            vector<string> equivalent_move;
             for (int i = 0; i < 3; i++)
             {
-                vector<string> move;
-                move.push_back("U'");
-                moveFunc(state, move);
+                equivalent_move.push_back("U'");
             }
+            moveFunc(state, equivalent_move);
         }
         else if (move == "D'")
         { // down counter-clockwise
@@ -204,12 +204,12 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves)
         }
         else if (move == "D")
         {
+            vector<string> equivalent_move;
             for (int i = 0; i < 3; i++)
             {
-                vector<string> move;
-                move.push_back("D'");
-                moveFunc(state, move);
+                equivalent_move.push_back("D'");
             }
+            moveFunc(state, equivalent_move);
         }
         else if (move == "E")
         {
@@ -218,7 +218,7 @@ void moveFunc(array<array<array<int, 3>, 3>, 6> &state, vector<string> &moves)
     }
 }
 
-void RubiksCube::move(vector<string> &moves)
+void RubiksCube::move(const vector<string> &moves)
 {
     moveFunc(state, moves);
 }
